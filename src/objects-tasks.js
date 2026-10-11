@@ -411,8 +411,28 @@ function getJSON(obj) {
  *    const r = fromJSON(Circle.prototype, '{"radius":10}');
  *
  */
-function fromJSON(/* proto, json */) {
-  throw new Error('Not implemented');
+function fromJSON(proto, json) {
+  // throw new Error('Not implemented');
+
+  return Object.create(
+    proto,
+    Object.getOwnPropertyDescriptors(JSON.parse(json))
+  );
+
+  // // - Исторически медленно.
+  // return Object.setPrototypeOf(JSON.parse(json), proto);
+
+  // // - Использование встроенного ревайвера
+  // // Когда парсинг доходит до корневого объекта (у него ключ — пустая строка)
+  // return JSON.parse(json, (key, value) => {
+  //   if (key === '') {
+  //     return Object.assign(Object.create(proto), value);
+  //   }
+  //   return value;
+  // });
+
+  // // - Наследование + безопасное копирование свойств.
+  // return Object.assign(Object.create(proto), JSON.parse(json));
 }
 
 /**
