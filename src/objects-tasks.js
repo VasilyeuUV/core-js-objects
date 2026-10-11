@@ -361,8 +361,25 @@ function sellTickets(queue) {
  *    console.log(r.height);      // => 20
  *    console.log(r.getArea());   // => 200
  */
-function Rectangle(/* width, height */) {
-  throw new Error('Not implemented');
+function Rectangle(width, height) {
+  // throw new Error('Not implemented');
+
+  // - Несовпадение вызова с примером. Дублирование методов для каждого нового прямоугольника.
+  // return {
+  //   width,
+  //   height,
+  //   getArea: () => width * height,
+  // };
+
+  // - Функция-конструктор с прототипом (Классический ES5)
+  this.width = width;
+  this.height = height;
+
+  if (typeof this.getArea !== 'function') {
+    Object.getPrototypeOf(this).getArea = function getArea() {
+      return this.width * this.height;
+    };
+  }
 }
 
 /**
