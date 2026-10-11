@@ -46,6 +46,15 @@ function mergeObjects(objects) {
   });
   return result;
 
+  // - Плохо по памяти: большой промежуточный массив.
+  // return objects
+  //   .flatMap((obj) => Object.entries(obj))
+  //   .reduce((acc, [k, v]) => {
+  //     acc[k] = (acc[k] || 0) + v;
+  //     return acc;
+  //   }, {});
+
+  // - Лучший вариант: один аккумулятор.
   // return objects.reduce((acc, obj) => {
   //   Object.entries(obj).forEach(([k, v]) => {
   //     acc[k] = (acc[k] || 0) + v;
@@ -67,8 +76,23 @@ function mergeObjects(objects) {
  *    removeProperties({name: 'John', age: 30, city: 'New York'}, ['age']) => {name: 'John', city: 'New York'}
  *
  */
-function removeProperties(/* obj, keys */) {
-  throw new Error('Not implemented');
+function removeProperties(obj, keys) {
+  // throw new Error('Not implemented');
+
+  const result = { ...obj };
+  keys.forEach((k) => delete result[k]);
+  return result;
+
+  // - Средние показатели, но объект
+  // return Object.fromEntries(
+  //   Object.entries(obj).filter(([k]) => !keys.includes(k))
+  // );
+
+  // - Медленный по скорости и памяти.
+  // return keys.reduce((acc, k) => {
+  //   const { [k]: _, ...rest } = acc;
+  //   return rest;
+  // }, obj);
 }
 
 /**
