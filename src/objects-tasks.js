@@ -155,8 +155,19 @@ function compareObjects(obj1, obj2) {
  *    isEmptyObject({}) => true
  *    isEmptyObject({a: 1}) => false
  */
-function isEmptyObject(/* obj */) {
-  throw new Error('Not implemented');
+function isEmptyObject(obj) {
+  // throw new Error('Not implemented');
+
+  return (
+    obj !== null && typeof obj === 'object' && Object.keys(obj).length === 0
+  );
+
+  // // - Метод Reflect.ownKeys возвращает абсолютно все ключи: и скрытые, и символы.
+  // // Если объект пустой, но в него добавили свойство-символ
+  // // (например, obj[Symbol('id')] = 1), то ни Object.keys, ни Object.getOwnPropertyNames его не увидят.
+  // return (
+  //   obj !== null && typeof obj === 'object' && Reflect.ownKeys(obj).length === 0
+  // );
 }
 
 /**
@@ -175,8 +186,20 @@ function isEmptyObject(/* obj */) {
  *    immutableObj.newProp = 'new';
  *    console.log(immutableObj) => {a: 1, b: 2}
  */
-function makeImmutable(/* obj */) {
-  throw new Error('Not implemented');
+function makeImmutable(obj) {
+  // throw new Error('Not implemented');
+
+  // - Замораживаем свойства:
+  if (obj === null || typeof obj !== 'object') {
+    return obj;
+  }
+  if (Object.isFrozen(obj)) {
+    return obj;
+  }
+  Object.keys(obj).forEach((key) => {
+    makeImmutable(obj[key]);
+  });
+  return Object.freeze(obj);
 }
 
 /**
