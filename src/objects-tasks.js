@@ -212,8 +212,65 @@ function makeImmutable(obj) {
  *    makeWord({ a: [0, 1], b: [2, 3], c: [4, 5] }) => 'aabbcc'
  *    makeWord({ H:[0], e: [1], l: [2, 3, 8], o: [4, 6], W:[5], r:[7], d:[9]}) => 'HelloWorld'
  */
-function makeWord(/* lettersObject */) {
-  throw new Error('Not implemented');
+function makeWord(lettersObject) {
+  // throw new Error('Not implemented');
+
+  if (lettersObject === null || typeof lettersObject !== 'object') {
+    return '';
+  }
+
+  // - Проблемы с производительностью: O(N^2 х M), много промежуточных массивов, лишние вычисления
+  if (isEmptyObject(lettersObject)) {
+    return '';
+  }
+  const positions = Object.values(lettersObject).flat();
+  const maxIndex = Math.max(...positions);
+  const wordArray = Array(maxIndex + 1);
+  positions.forEach((i) => {
+    const found = Object.entries(lettersObject).find(([, values]) =>
+      values.includes(i)
+    );
+    if (found) {
+      const [char] = found;
+      wordArray[i] = char;
+    }
+  });
+  return wordArray.join('');
+
+  // // - Оптимизированный предыдущий вариант.
+  // const wordArray = [];
+  // Object.entries(lettersObject).forEach(([char, indices]) => {
+  //   indices.forEach((index) => {
+  //     wordArray[index] = char;
+  //   });
+  // });
+  // return wordArray.join('');
+
+  // // - Быстрый по памяти.
+  // let maxLength = 0;
+  // Object.keys(lettersObject).forEach((char) => {
+  //   lettersObject[char].forEach((index) => {
+  //     if (index >= maxLength) maxLength = index + 1;
+  //   });
+  // });
+  // if (maxLength === 0) return '';
+  // const wordArray = Array(maxLength);
+  // Object.keys(lettersObject).forEach((char) => {
+  //   lettersObject[char].forEach((index) => {
+  //     wordArray[index] = char;
+  //   });
+  // });
+  // return wordArray.join('');
+
+  // // - Короткий и декларативный.
+  // return Object.keys(lettersObject)
+  //   .reduce((acc, char) => {
+  //     lettersObject[char].forEach((index) => {
+  //       acc[index] = char;
+  //     });
+  //     return acc;
+  //   }, [])
+  //   .join('');
 }
 
 /**
