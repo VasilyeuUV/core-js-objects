@@ -107,8 +107,41 @@ function removeProperties(obj, keys) {
  *    compareObjects({a: 1, b: 2}, {a: 1, b: 2}) => true
  *    compareObjects({a: 1, b: 2}, {a: 1, b: 3}) => false
  */
-function compareObjects(/* obj1, obj2 */) {
-  throw new Error('Not implemented');
+function compareObjects(obj1, obj2) {
+  // throw new Error('Not implemented');
+
+  // // - Если ссылки одинаковы, то быстро, иначе - сравнение строк.
+  // // Норм для простых и плоских структур.
+  // // Проблема: чувствителен к порядку ключей и проблема с типами (NaN, infinity преобразуются в null)
+  // return obj1 === obj2 || JSON.stringify(obj1) === JSON.stringify(obj2);
+
+  // - Поверхностное сравнивание по ключам (верхний уровень).
+  if (obj1 === obj2) return true;
+  const keys1 = Object.keys(obj1);
+  const keys2 = Object.keys(obj2);
+  return (
+    keys1.length === keys2.length &&
+    keys1.every((k) => keys2.includes(k) && obj1[k] === obj2[k])
+    // keys1.every(
+    //   (k) =>
+    //     Object.prototype.hasOwnProperty.call(obj2, k) && obj1[k] === obj2[k]
+    // )
+  );
+
+  // ВАРИАНТЫ:
+  // // - structuredClone нормализует и стандартизирует структуры данных
+  // // Но проблема с порядком ключей остается.
+  // // structuredClone падает, если внутри есть функции или Symbol
+  // // Если объекты содержат функции, они заведомо не сериализуемы одинаково
+  // if (obj1 === obj2) return true;
+  // try {
+  //   return (
+  //     JSON.stringify(structuredClone(obj1)) ===
+  //     JSON.stringify(structuredClone(obj2))
+  //   );
+  // } catch {
+  //   return false;
+  // }
 }
 
 /**
