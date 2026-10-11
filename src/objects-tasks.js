@@ -287,8 +287,65 @@ function makeWord(lettersObject) {
  *    sellTickets([25, 25, 50]) => true
  *    sellTickets([25, 100]) => false (The seller does not have enough money to give change.)
  */
-function sellTickets(/* queue */) {
-  throw new Error('Not implemented');
+function sellTickets(queue) {
+  // throw new Error('Not implemented');
+
+  const ticketCost = 25;
+  const cash = [];
+
+  return queue.every((q) => {
+    const existingBill = cash.find((bill) => bill.nominal === q);
+    if (existingBill) {
+      existingBill.count += 1;
+    } else {
+      cash.push({ nominal: q, count: 1 });
+    }
+
+    let change = q - ticketCost;
+    if (change === 0) return true;
+
+    const availableBills = cash
+      .filter((bill) => bill.count > 0)
+      .sort((a, b) => b.nominal - a.nominal);
+
+    availableBills.forEach((bill) => {
+      const currentBill = bill;
+      if (change >= currentBill.nominal) {
+        const neededCount = Math.floor(change / currentBill.nominal);
+        const countToTake = Math.min(neededCount, currentBill.count);
+        currentBill.count -= countToTake;
+        change -= countToTake * currentBill.nominal;
+      }
+    });
+
+    return change === 0;
+  });
+
+  // // - Реализация через Map.
+  // const ticketCost = 25;
+  // const cash = new Map();
+
+  // return queue.every((bill) => {
+  //   cash.set(bill, (cash.get(bill) || 0) + 1);
+
+  //   let changeNeeded = bill - ticketCost;
+  //   if (changeNeeded === 0) return true;
+
+  //   const availableNominals = Array.from(cash.keys())
+  //     .filter((nominal) => cash.get(nominal) > 0)
+  //     .sort((a, b) => b - a);
+
+  //   availableNominals.forEach((nominal) => {
+  //     if (changeNeeded >= nominal) {
+  //       const availableCount = cash.get(nominal);
+  //       const neededCount = Math.floor(changeNeeded / nominal);
+  //       const countToTake = Math.min(neededCount, availableCount);
+  //       cash.set(nominal, availableCount - countToTake);
+  //       changeNeeded -= countToTake * nominal;
+  //     }
+  //   });
+  //   return changeNeeded === 0;
+  // });
 }
 
 /**
